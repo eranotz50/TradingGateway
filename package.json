@@ -1,0 +1,39 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "core-js": {
+      "integrity": "sha512-Qa5XSVefSVPRxy2XfUC13WbvqkxhkwB3ve+pgCQveNgYzbM/UxZeu1dcOX/xr4UmfUd+muuvsaxilQzCyUurMw==",
+      "resolved": "https://registry.npmjs.org/core-js/-/core-js-3.2.1.tgz",
+      "version": "3.2.1"
+    },
+    "promise-duplex": {
+      "integrity": "sha512-UgjhvdiexxbaaitwxT5lYeRnVftJo3JjyN0Ikq8/NtMWEq+uaULi0V5GtQXt012FEdW0wQyQI4+pxEnFQQF9Qw==",
+      "requires": {
+        "core-js": "3.2.1",
+        "promise-readable": "5.0.1",
+        "promise-writable": "5.0.1"
+      },
+      "resolved": "https://registry.npmjs.org/promise-duplex/-/promise-duplex-5.0.0.tgz",
+      "version": "5.0.0"
+    },
+    "promise-readable": {
+      "integrity": "sha512-+tXlfqBy7T73jQXN5U9TxbF+SN9zW1VERi4MkwdO+X3N1pymHZXLgyITGnCtuPZBakPmGuUsyJ2OMYgkL0H3TQ==",
+      "requires": {
+        "core-js": "3.2.1"
+      },
+      "resolved": "https://registry.npmjs.org/promise-readable/-/promise-readable-5.0.1.tgz",
+      "version": "5.0.1"
+    },
+    "promise-writable": {
+      "integrity": "sha512-zeqxKTZToXACkmOAlOsWMmhQ+ohY9bkA46IEyhU2891aK5tmZ9MNhT5iS7Vt/417lYcWGm0jy7YVqkYZOs5C3w==",
+      "resolved": "https://registry.npmjs.org/promise-writable/-/promise-writable-5.0.1.tgz",
+      "version": "5.0.1"
+    },
+    "tslib": {
+      "integrity": "sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==",
+      "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.10.0.tgz",
+      "version": "1.10.0"
+    }
+  }
+}
