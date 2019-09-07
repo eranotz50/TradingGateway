@@ -5,21 +5,16 @@ const client = new net.Socket();
 module.exports = function TradingGateway(config){
 
     
-    this.Read = function(){
+    this.StartReceive = function(){
         return new Promise(function(resolve,reject){
             client.on('data', function(data) {    
-                console.log('Client received: ' + data);
-                 if (data.toString().endsWith('exit')) {
-                   client.destroy();
-                }
+                  console.log('data -> ' + data) ;  
             });
         })
     }
 
     
-         
-    
-   
+                
     this.Connect = function(){
         return new Promise(function(resolve,reject){
 
@@ -31,7 +26,7 @@ module.exports = function TradingGateway(config){
                 resolve(util.format('Remote endpoint closed. %s:%s',client.remoteAddress,client.remotePort));    
             });
              
-            client.connect(config.port,config.address,function(){
+            client.connect(config.port,config.address,function(){                
                 resolve(util.format('Connected to %s:%s',config.address,config.port));    
             });
         });                
