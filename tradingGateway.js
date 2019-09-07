@@ -2,21 +2,22 @@ const net = require('net');
 const util = require('util');
 const client = new net.Socket();
 
+
 module.exports = function TradingGateway(config){
-
     
-    this.StartReceive = function(){
-        return new Promise(function(resolve,reject){
-            client.on('data', function(data) {    
-                  console.log('data -> ' + data) ;  
-            });
-        })
-    }
+   
 
-    
-                
+  
     this.Connect = function(){
         return new Promise(function(resolve,reject){
+
+            var buf = { msgSize : 0, Buffer}
+
+            client.on('data', function(data) {    
+                
+                                                
+                console.log('data -> ' + data) ;  
+            });
 
             client.on('error', function(err) {
                 reject(util.format('Error connting to %s:%s \n %s',config.address,config.port,err));
