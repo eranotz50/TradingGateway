@@ -1,13 +1,13 @@
 var TradingGateway = require('./tradingGateway.js')
-var config = require('./Config/tradingGateway.json');
+var config = require('./Config/tgConfig.js');
 
 var tradingGateway = new TradingGateway(config);
 
-tradingGateway.Connect()
-    .then(res => {
-        console.log(res);
-        tradingGateway.StartReceive()
-            .then(msg => console.log('Received -> ' + msg))
-            .catch(err => console.log('Read Error -> ' + err));
-    })
+
+function onNextMessage(msg){
+    console.log(JSON.stringify(msg);
+}
+
+tradingGateway.Connect(onNextMessage)
+    .then(res => console.log(res))
     .catch(err => console.log(err))
