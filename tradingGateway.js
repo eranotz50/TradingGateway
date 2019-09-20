@@ -6,10 +6,12 @@ const network = require('./Utils/network.js')();
 
 module.exports = function TradingGateway(config){
          
-    this.Connect = function(onNextMessage){
+    this.Connect = function(){
         return new Promise(function(resolve,reject){
            
-           network.BeginReceive(client,onNextMessage); 
+           network.BeginReceive(client,msg => {
+                console.log(msg);
+           }); 
                        
             client.on('error', function(err) {
                 reject(util.format('Error connting to %s:%s \n %s',config.address,config.port,err));
