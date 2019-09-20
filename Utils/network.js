@@ -4,8 +4,6 @@ function BeginReceive(stream,onNextMessage){
 
     stream.on('data', function(data) {    
                
-        console.log('data -> ' + data) ;  
-
         message.Buffer = Buffer.concat([message.Buffer,data]);    
 
         if(message.size == -1){
@@ -29,34 +27,22 @@ function BeginReceive(stream,onNextMessage){
         
         if(message.size && message.Buffer.length >= message.size){
             
-            var msg = null;
-
-            var msgStr = message.Buffer.toString('ascii',0,message.size);   
+            var msg = message.Buffer.toString('ascii',0,message.size);   
            
             message.Buffer =  message.Buffer.slice(message.size, message.Buffer.length);    //message.Buffer.slice(message.size, message.Buffer.length - message.size); // remove curret message bytes 
             message.size = -1;            
-            
-            try{
-                msg = JSON.parse(msgStr);      
-            }
-            catch(err){
-                msg = msgStr;
-            }
-            
-            //message = { size : -1 , Buffer : new Buffer(0) }; // zero all for next message
-
-            if(msg != null){
-                onNextMessage(msg);              
-            }            
+                        
+            onNextMessage(msg);              
         }                                                            
     });
 }
 
 
 module.exports = function(){
-
+   
     return {
-        BeginReceive : BeginReceive
+        
+        BeginReceive : BeginReceive,              
     }
 
 
