@@ -3,9 +3,8 @@ var config = require('./Config/tgConfig.js');
 
 var tradingGateway = new TradingGateway(config);
 
-
 function onNextMessage(msg){
-    console.log(JSON.stringify(msg);
+    console.log(JSON.stringify(msg));
 }
 
 tradingGateway.Connect(onNextMessage)
