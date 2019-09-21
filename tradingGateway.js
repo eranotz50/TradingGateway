@@ -4,15 +4,46 @@ const client = new net.Socket();
 
 const network = require('./Utils/network.js')();
 
+
+const push = {
+
+    FeedUpdate : function(json){
+        var feedQuote = JSON.parse(json);
+
+
+    }
+
+}
+
+
+
+
 module.exports = function TradingGateway(config){
          
     this.Connect = function(){
         return new Promise(function(resolve,reject){
-           
-           network.BeginReceive(client,msg => {
-                console.log(msg);
-           }); 
                        
+            network.SetOnNextMessage(msg => {
+                
+                if(msg.includes("Connected")){
+                    
+                    network.SetOnNextMessage(msg => {
+                        var parts = msg.split(','); 
+
+                        if(parts[0] === -1){
+                            HandlePumping(parts);
+                        }
+
+
+
+                    });
+                    
+                    resolve(util.format('Connected to %s:%s',config.address,config.port));    
+                }                
+            })
+
+            network.BeginReceive(client);
+              
             client.on('error', function(err) {
                 reject(util.format('Error connting to %s:%s \n %s',config.address,config.port,err));
             });
@@ -28,9 +59,7 @@ module.exports = function TradingGateway(config){
                 var lenBuffer = Buffer.from(len);
 
                 var sendBuffer = Buffer.concat([lenBuffer,dataBuffer]);                
-                client.write(sendBuffer);  
-
-                resolve(util.format('Connected to %s:%s',config.address,config.port));    
+                client.write(sendBuffer);                 
             });
         });                
     }

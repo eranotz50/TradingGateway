@@ -1,3 +1,6 @@
+
+var onNextMessage = () => {};
+
 function BeginReceive(stream,onNextMessage){
 
     var message = { size : -1 , Buffer : new Buffer(0)};
@@ -41,7 +44,9 @@ function BeginReceive(stream,onNextMessage){
 module.exports = function(){
    
     return {
-        
+        SetOnNextMessage : function(handler){
+            onNextMessage = handler;
+        }        
         BeginReceive : BeginReceive,              
     }
 
