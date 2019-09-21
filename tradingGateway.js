@@ -3,20 +3,46 @@ const util = require('util');
 const client = new net.Socket();
 
 const network = require('./Utils/network.js')();
+const observable = require('./Utils/observable.js')();
+
 
 
 const push = {
 
-    FeedUpdate : function(json){
-        var feedQuote = JSON.parse(json);
+    handle : function(command,jsonData){
+        if(!this.command){
+            throw new Error('Could not find Command -> ' + command);
+        }
 
+        this.command(jsonData);
 
+    },
+
+    FeedUpdate : function(jsonData){
+        var feedQuote = JSON.parse(jsonData);
+        observable.noNext('quote',feedQuote);
     }
 
 }
 
+function messageHandler(msg){
+    
+    var requestId = parts[0];
+    var command = parts[2];
+    var jsonData = parts[3];
 
 
+    if(requestId === -1){
+        try{
+            push.handle(command,jsonData);
+        }                            
+        catch(err){
+
+        }
+    }
+
+
+}
 
 module.exports = function TradingGateway(config){
          
@@ -27,17 +53,7 @@ module.exports = function TradingGateway(config){
                 
                 if(msg.includes("Connected")){
                     
-                    network.SetOnNextMessage(msg => {
-                        var parts = msg.split(','); 
-
-                        if(parts[0] === -1){
-                            HandlePumping(parts);
-                        }
-
-
-
-                    });
-                    
+                    network.SetOnNextMessage(messageHandler);                                                                   
                     resolve(util.format('Connected to %s:%s',config.address,config.port));    
                 }                
             })
@@ -63,5 +79,8 @@ module.exports = function TradingGateway(config){
             });
         });                
     }
+
+    this.on = observable.subscribe;
+
 
 }

@@ -46,7 +46,8 @@ module.exports = function(){
     return {
         SetOnNextMessage : function(handler){
             onNextMessage = handler;
-        }        
+        },   
+        
         BeginReceive : BeginReceive,              
     }
 
