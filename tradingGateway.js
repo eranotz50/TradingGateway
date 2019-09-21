@@ -15,9 +15,7 @@ const push = {
         }
 
         this.command(jsonData);
-
     },
-
     FeedUpdate : function(jsonData){
         var feedQuote = JSON.parse(jsonData);
         observable.noNext('quote',feedQuote);
@@ -30,7 +28,6 @@ function messageHandler(msg){
     var requestId = parts[0];
     var command = parts[2];
     var jsonData = parts[3];
-
 
     if(requestId === -1){
         try{
@@ -61,6 +58,9 @@ module.exports = function TradingGateway(config){
             network.BeginReceive(client);
               
             client.on('error', function(err) {
+
+
+                
                 reject(util.format('Error connting to %s:%s \n %s',config.address,config.port,err));
             });
                 
@@ -81,6 +81,4 @@ module.exports = function TradingGateway(config){
     }
 
     this.on = observable.subscribe;
-
-
 }
