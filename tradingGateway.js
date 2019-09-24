@@ -3,7 +3,7 @@ const util = require('util');
 const client = new net.Socket();
 
 const network = require('./Utils/network.js')();
-const observable = require('./Utils/observable.js')();
+const observable = require('./Utils/observable.js');
 
 
 
@@ -25,6 +25,8 @@ const push = {
 
 function messageHandler(msg){
     
+    var parts = msg.split(',');
+
     var requestId = parts[0];
     var command = parts[2];
     var jsonData = parts[3];
@@ -34,7 +36,7 @@ function messageHandler(msg){
             push.handle(command,jsonData);
         }                            
         catch(err){
-
+             console.log(util.format('Error from push.handle(%s,{...})',command));   
         }
     }
 
@@ -46,10 +48,8 @@ module.exports = function TradingGateway(config){
     this.Connect = function(){
         return new Promise(function(resolve,reject){
                        
-            network.SetOnNextMessage(msg => {
-                
-                if(msg.includes("Connected")){
-                    
+            network.SetOnNextMessage(function(msg){                
+                if(msg.includes("Connected")){                     
                     network.SetOnNextMessage(messageHandler);                                                                   
                     resolve(util.format('Connected to %s:%s',config.address,config.port));    
                 }                

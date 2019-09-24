@@ -1,7 +1,9 @@
 
-var onNextMessage = () => {};
+var onNextMessage = function(msg){
 
-function BeginReceive(stream,onNextMessage){
+};
+
+function BeginReceive(stream){
 
     var message = { size : -1 , Buffer : new Buffer(0)};
 
