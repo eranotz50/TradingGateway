@@ -10,11 +10,11 @@ const observable = require('./Utils/observable.js');
 const push = {
 
     handle : function(command,jsonData){
-        if(!this.command){
+        if(!this[command]){
             throw new Error('Could not find Command -> ' + command);
         }
 
-        this.command(jsonData);
+        this[command](jsonData);
     },
     FeedUpdate : function(jsonData){
         var feedQuote = JSON.parse(jsonData);
@@ -23,20 +23,39 @@ const push = {
 
 }
 
+function toMessageParts(msg){
+
+    var i1 = msg.indexOf(',');
+    var i2 = msg.indexOf(',',i1 + 1);
+    var i3 = msg.indexOf(',',i2 + 1);
+
+    var requestIdStr = msg.substring(0,i1);
+    var requestId = parseInt(requestIdStr);
+    
+    var module = msg.substring(i1 + 1, i2);
+    var command = msg.substring(i2 + 1, i3);
+    var json =  msg.substring(i3 +1, msg.length);
+
+    return {
+
+        RequestId : requestId,
+        Module : module,
+        Command : command,
+        JsonData : json
+    }
+}
+
+
 function messageHandler(msg){
     
-    var parts = msg.split(',');
+    var parts = toMessageParts(msg);
 
-    var requestId = parts[0];
-    var command = parts[2];
-    var jsonData = parts[3];
-
-    if(requestId === -1){
+    if(parts.RequestId === -1){
         try{
-            push.handle(command,jsonData);
+            push.handle(parts.Command,parts.JsonData);
         }                            
         catch(err){
-             console.log(util.format('Error from push.handle(%s,{...})',command));   
+             console.log(util.format('Error from push.handle(%s,{...})',parts.Command));   
         }
     }
 
