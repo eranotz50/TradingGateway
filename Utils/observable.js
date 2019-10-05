@@ -1,4 +1,5 @@
 var handlers = {};
+var events = {};
 
 const noNext = function(event,value){
 
@@ -11,7 +12,7 @@ const noNext = function(event,value){
 
 const subscribe = function(event,handler){
     
-    if(typeof events[event] === undefined){
+    if(events[event] === undefined){
         events[event] = [];
     }
 

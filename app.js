@@ -10,3 +10,7 @@ var tradingGateway = new TradingGateway(config);
 tradingGateway.Connect()
     .then(res => console.log(res))
     .catch(err => console.log(err))
+
+tradingGateway.on('quote',function(q){
+    console.log(q);
+})    

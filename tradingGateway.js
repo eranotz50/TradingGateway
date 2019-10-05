@@ -5,7 +5,7 @@ const client = new net.Socket();
 const network = require('./Utils/network.js')();
 const observable = require('./Utils/observable.js');
 
-
+var lastPingTime = new Date('0001-01-01T00:00:00Z');
 
 const push = {
 
@@ -19,6 +19,14 @@ const push = {
     FeedUpdate : function(jsonData){
         var feedQuote = JSON.parse(jsonData);
         observable.noNext('quote',feedQuote);
+    },
+    LoginUpdate : function(jsonData){
+        var login = JSON.parse(jsonData);
+        observable.noNext('login',login);
+    },
+    Mt4ConnectStatus : function(jsonData){
+        var status = JSON.parse(jsonData);
+        lastPingTime = Date.now();
     }
 
 }
@@ -32,14 +40,14 @@ function toMessageParts(msg){
     var requestIdStr = msg.substring(0,i1);
     var requestId = parseInt(requestIdStr);
     
-    var module = msg.substring(i1 + 1, i2);
+    var moduleName = msg.substring(i1 + 1, i2);
     var command = msg.substring(i2 + 1, i3);
     var json =  msg.substring(i3 +1, msg.length);
 
     return {
 
         RequestId : requestId,
-        Module : module,
+        Module : moduleName,
         Command : command,
         JsonData : json
     }
@@ -76,10 +84,7 @@ module.exports = function TradingGateway(config){
 
             network.BeginReceive(client);
               
-            client.on('error', function(err) {
-
-
-                
+            client.on('error', function(err) {                
                 reject(util.format('Error connting to %s:%s \n %s',config.address,config.port,err));
             });
                 
