@@ -4,6 +4,8 @@ const client = new net.Socket();
 
 const network = require('./Utils/network.js')();
 const observable = require('./Utils/observable.js');
+const api = require('./api.js')(client);
+
 
 var lastPingTime = new Date('0001-01-01T00:00:00Z');
 
@@ -31,7 +33,7 @@ const push = {
 
 }
 
-function toMessageParts(msg){
+function Deserialize(msg){
 
     var i1 = msg.indexOf(',');
     var i2 = msg.indexOf(',',i1 + 1);
@@ -56,7 +58,7 @@ function toMessageParts(msg){
 
 function messageHandler(msg){
     
-    var parts = toMessageParts(msg);
+    var parts = Deserialize(msg);
 
     if(parts.RequestId === -1){
         try{
@@ -66,11 +68,9 @@ function messageHandler(msg){
              console.log(util.format('Error from push.handle(%s,{...})',parts.Command));   
         }
     }
-
-
 }
 
-module.exports = function TradingGateway(config){
+function TradingGateway(config){
          
     this.Connect = function(){
         return new Promise(function(resolve,reject){
@@ -104,5 +104,9 @@ module.exports = function TradingGateway(config){
         });                
     }
 
-    this.on = observable.subscribe;
+    this.on = observable.subscribe;    
 }
+
+TradingGateway.prototype = api;
+
+module.exports = TradingGateway;
