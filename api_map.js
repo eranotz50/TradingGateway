@@ -1,4 +1,4 @@
-module.exports = function Map(){
+module.exports = function (){
 
     this.GetTradingAccounts  = { 
         Module : "Accounts",

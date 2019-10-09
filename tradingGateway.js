@@ -29,8 +29,15 @@ const push = {
     Mt4ConnectStatus : function(jsonData){
         var status = JSON.parse(jsonData);
         lastPingTime = Date.now();
+    },
+    TradeUpdate : function(jsonData){
+        var trade = JSON.parse(jsonData);
+        observable.noNext('trade',trade);
+    },
+    MarginUpdate : function(jsonData){
+        var margin = JSON.parse(jsonData);
+        observable.noNext('margin',margin);
     }
-
 }
 
 function Deserialize(msg){
@@ -40,7 +47,7 @@ function Deserialize(msg){
     var i3 = msg.indexOf(',',i2 + 1);
 
     var requestIdStr = msg.substring(0,i1);
-    var requestId = parseInt(requestIdStr);
+    //var requestId = parseInt(requestIdStr);
     
     var moduleName = msg.substring(i1 + 1, i2);
     var command = msg.substring(i2 + 1, i3);
@@ -48,25 +55,49 @@ function Deserialize(msg){
 
     return {
 
-        RequestId : requestId,
+        RequestId : requestIdStr,
         Module : moduleName,
         Command : command,
-        JsonData : json
+        JsonData : json,
+
     }
 }
 
 
-function messageHandler(msg){
+function messageHandler(rawMsg){
     
-    var parts = Deserialize(msg);
+    var message = Deserialize(rawMsg);
 
-    if(parts.RequestId === -1){
+    if(message.RequestId === '-1'){ // if pumping
         try{
-            push.handle(parts.Command,parts.JsonData);
+            push.handle(message.Command,message.JsonData);
         }                            
         catch(err){
-             console.log(util.format('Error from push.handle(%s,{...})',parts.Command));   
+             console.log(util.format('Error from push.handle(%s,{...})',message.Command));   
         }
+    }
+    else {  // if response
+        
+        var promise = api.Requests[message.RequestId];
+        
+        if(promise === undefined){
+            observable.noNext('error','could not find handler for message -> ' + message.toString());
+        }
+
+        try{
+
+            if(message.JsonData === "Exception"){
+                promise.reject(response);
+            }
+            else{
+                var response = JSON.parse(message.JsonData);
+                promise.resolve(response);    
+            }            
+        }
+        catch(e){
+            promise.reject('Error parsing response data -> \n' + message.toString() + '\n' + e)
+        }
+               
     }
 }
 
@@ -92,14 +123,8 @@ function TradingGateway(config){
                 resolve(util.format('Remote endpoint closed. %s:%s',client.remoteAddress,client.remotePort));    
             });
              
-            client.connect(config.port,config.address,function(){                
-                                 
-                var dataBuffer = Buffer.from(config.toString(), 'utf8'); 
-                var len = dataBuffer.length + '\n';
-                var lenBuffer = Buffer.from(len);
-
-                var sendBuffer = Buffer.concat([lenBuffer,dataBuffer]);                
-                client.write(sendBuffer);                 
+            client.connect(config.port,config.address,function(){                                                 
+                network.Send(client,config.toString());
             });
         });                
     }

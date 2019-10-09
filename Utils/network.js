@@ -42,6 +42,16 @@ function BeginReceive(stream){
     });
 }
 
+function Send(stream,data){
+
+    var dataBuffer = Buffer.from(data, 'utf8'); 
+    var len = dataBuffer.length + '\n';
+    var lenBuffer = Buffer.from(len);
+
+    var sendBuffer = Buffer.concat([lenBuffer,dataBuffer]);                
+    stream.write(sendBuffer);                 
+}
+
 
 module.exports = function(){
    
@@ -50,7 +60,9 @@ module.exports = function(){
             onNextMessage = handler;
         },   
         
-        BeginReceive : BeginReceive,              
+        BeginReceive : BeginReceive,  
+        Send : Send
+        
     }
 
 

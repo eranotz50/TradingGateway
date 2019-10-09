@@ -1,32 +1,47 @@
 var TradingGateway = require('./tradingGateway.js')
 var config = require('./Config/tgConfig.js');
+const util = require('util');
 
 var tradingGateway = new TradingGateway(config);
 
-/*function onNextMessage(msg){
-    console.log(JSON.stringify(msg));
-}*/
 
-/*tradingGateway.Connect()
-    .then(res => console.log(res))
+tradingGateway.Connect()
+    .then(res => {
+        console.log(res);
+        
+        var dt = new Date('2000-01-01T00:00:00Z');
+        tradingGateway.GetTradingAccounts(['Balance','Login'],dt)
+            .then(tradingAccounts =>{
+                console.log(util.format('Received %d tradingAccounts',tradingAccounts.length()))
+            })
+            .catch( err => console.log('Error from GetTradingAccounts()  -> ' + err))
+    })
     .catch(err => console.log(err))
 
 tradingGateway.on('quote',function(q){
     console.log(q);
-})*/    
+}) 
 
 
-//var dt = new Date('2000-01-01T00:00:00Z');
 
-//var tradingAccounts = tradingGateway.GetTradingAccounts(['Balance','Login'],dt)
+
+/*
+function test(obj){
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            console.log(key + " -> " + obj[key]);
+        }
+    }
+
+}
+
 
 
 var fields = ['Balance','Login'];
-var fieldsObj = {fields}
+var stam = 'dfsgg';
+var fieldsObj = {fields,stam}
 
-var name = Object.keys(fieldsObj)[0];
+test(fieldsObj);
 
-var obj = {};
-obj['fields'] = fields
-
-console.log(obj);
+var names = Object.keys(fieldsObj);
+*/

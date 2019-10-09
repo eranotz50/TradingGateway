@@ -1,50 +1,41 @@
-const apiMetaData = require('./api_map.js')();
+const Map = new require('./api_map.js');
+const apiMetaData = new Map();
+
 const util = require('util');
-const acorn = require('acorn');    
+const network = require('./Utils/network.js')();
 
 
-var client = null;
+var requestMap = {};
+
+var _client = null;
 var requestId = 0;
 
 
 
-function Request(fn){
-    var metaData = apiMetaData[fn];
-    var parameters = { 
-        fields : fields,
-        lastChangeTimestamp : lastChangeTimestamp
-    };   
-}
+function Serialize(fn,parameters){    
+    var metaData = apiMetaData[fn];        
+    var requestStr =  util.format("%d,%s,%s,%s",++requestId,metaData.Module,metaData.Command,JSON.stringify(parameters));
+    return requestStr;
 
-function Serialize(requestId,metaData,parameters){
-    return util.format("%d,%s,%s,%s",requestId,metaData.module,metaData.command,JSON.stringify(parameters));
 }
 
 
-function GetTradingAccounts(fields,lastChangeTimestamp){
+function GetTradingAccounts(fields,lastChangeTimestamp){        
+    var request = Serialize(arguments.callee.name,{fields,lastChangeTimestamp});
     
-    var obj = {};
-    obj['fields'] = fields;
-    obj['lastChangeTimestamp'] = lastChangeTimestamp;
+    var promise = new Promise(function(resolve,reject){});
+    requestMap[requestId.toString()] = { request, promise};
 
-
-    var args = acorn.parse(arguments.callee).body[0].params; 
-    var fn = arguments.callee.name;    
- 
-
+    network.Send(_client,request);
+    
+    return promise;
 }
-
-
-
-
-
-
-
 
 module.exports = function(client){
-    client = client;
+    _client = client;
 
     return{
-        GetTradingAccounts : GetTradingAccounts
+        GetTradingAccounts : GetTradingAccounts,
+        Requests : requestMap
     }
 }
